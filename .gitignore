@@ -1,0 +1,21 @@
+# Secrets
+.env
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Editors and operating systems
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Local documents (keep the generated demo PDF out of Git)
+data/*.pdf
+!data/.gitkeep
