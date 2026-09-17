@@ -21,10 +21,20 @@ class EvaluationCase:
 
 
 @dataclass(frozen=True)
+class RetrievedItem:
+    rank: int
+    citation: str
+    source: str
+    page: int
+    chunk_id: str
+    score: float
+
+
+@dataclass(frozen=True)
 class CaseResult:
     case: EvaluationCase
     rank: int | None
-    retrieved: tuple[str, ...]
+    retrieved: tuple[RetrievedItem, ...]
 
     @property
     def hit(self) -> bool:
@@ -39,7 +49,16 @@ class EvaluationReport:
 
     @property
     def recall_at_k(self) -> float:
-        return sum(case.hit for case in self.cases) / len(self.cases) if self.cases else 0.0
+        return self.recall_at(self.top_k)
+
+    def recall_at(self, cutoff: int) -> float:
+        if cutoff <= 0:
+            raise ValueError("cutoff 必须大于 0")
+        if not self.cases:
+            return 0.0
+        return sum(
+            case.rank is not None and case.rank <= cutoff for case in self.cases
+        ) / len(self.cases)
 
     @property
     def mean_reciprocal_rank(self) -> float:
@@ -92,7 +111,17 @@ def evaluate(
             CaseResult(
                 case=case,
                 rank=rank,
-                retrieved=tuple(result.citation for result in results),
+                retrieved=tuple(
+                    RetrievedItem(
+                        rank=index,
+                        citation=result.citation,
+                        source=result.chunk.source,
+                        page=result.chunk.page,
+                        chunk_id=result.chunk.chunk_id,
+                        score=result.score,
+                    )
+                    for index, result in enumerate(results, start=1)
+                ),
             )
         )
     return EvaluationReport(

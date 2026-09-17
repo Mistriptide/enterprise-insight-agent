@@ -98,7 +98,7 @@ python main.py --pdf data/sample_company_report.pdf --question "What are the mai
 python main.py --pdf data/sample_company_report.pdf --question "What concerns did executives highlight?" --retriever vector --show-context
 ```
 
-默认模型为 `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2`，支持中英文。FastEmbed 使用 ONNX Runtime 在 CPU 上运行，不需要 GPU。首次使用会下载约 220MB 模型，并缓存到当前项目的 `data/model_cache/`；该目录不会提交 GitHub。
+默认模型为 `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2`，支持中英文。FastEmbed 使用 ONNX Runtime 在 CPU 上运行，不需要 GPU。首次使用会下载约 220MB 的模型主体，实际缓存空间可能略大，并保存到当前项目的 `data/model_cache/`；该目录不会提交 GitHub。
 
 如果只想检查检索、不调用 DeepSeek：
 
@@ -160,7 +160,12 @@ python -m pytest
 
 ```powershell
 python scripts/create_sample_pdf.py
-python -m scripts.evaluate_retrievers --pdf data/sample_company_report.pdf --dataset eval/sample_questions.json --mode all --top-k 1
+python -m scripts.evaluate_retrievers `
+  --pdf data/sample_company_report.pdf `
+  --dataset eval/sample_questions.json `
+  --mode all `
+  --cutoffs 1 3 `
+  --output eval/results/retrieval_evaluation.json
 ```
 
 评测集中的每道题都标注了正确文件和页码：
@@ -169,7 +174,27 @@ python -m scripts.evaluate_retrievers --pdf data/sample_company_report.pdf --dat
 - `MRR`：正确页面出现得越靠前，分数越高；
 - 逐题 `rank` / `MISS`：用于定位检索器具体漏掉了什么问题。
 
-当前关键词 baseline 在六道同义改写问题上的 `Recall@1` 为 **66.7%**。这不是为了证明向量检索必然更好，而是为后续比较建立固定基准。
+### 当前真实结果
+
+| Retriever | Recall@1 | Recall@3 | MRR |
+|---|---:|---:|---:|
+| Keyword baseline | 66.7% | 83.3% | 0.750 |
+| Vector retrieval | 83.3% | 100.0% | 0.917 |
+
+逐题比较：
+
+- Vector 改善：`management_concerns`（MISS → 1）、`next_priority`（2 → 1）；
+- Vector 退化：`premium_mix`（1 → 2）；
+- 排名不变：`revenue`、`sales_route`、`inventory_efficiency`。
+
+主要结论：Embedding 能处理 `concerns / executives` 与 `risks / management` 这类没有直接词面重合的表达，也能识别 `focus on next year` 与 `2026 priority` 的语义关系。但它并非总是更好：`premium_mix` 中，当前模型没有稳定对齐 `product tier / sales` 与 `premium products / revenue`，而整页级 Chunk 混合了多项事实，进一步放大了语义偏差。
+
+结果文件：
+
+- `eval/results/retrieval_evaluation.json`：完整参数、分数、召回顺序和逐题排名；
+- `eval/results/retrieval_evaluation.md`：指标、胜负和退化归因摘要。
+
+实验限制：固定集只有 6 道英文问题和 2 个候选 Chunk，因此 Recall@3 接近全语料检查，区分度有限；这组结果能验证评测流程和当前方法差异，但不能代表真实中文年报上的最终效果。
 
 ## RAG 闭环如何工作
 
@@ -197,7 +222,11 @@ enterprise-insight-agent/
 ├── data/
 │   └── .gitkeep
 ├── eval/
-│   └── sample_questions.json
+│   ├── sample_questions.json
+│   ├── analysis_notes.json
+│   └── results/
+│       ├── retrieval_evaluation.json
+│       └── retrieval_evaluation.md
 ├── scripts/
 │   ├── create_sample_pdf.py
 │   └── evaluate_retrievers.py

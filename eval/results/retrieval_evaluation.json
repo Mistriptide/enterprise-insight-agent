@@ -1,0 +1,309 @@
+{
+  "experiment": {
+    "generated_at_utc": "2026-09-17T14:22:35.971581+00:00",
+    "pdfs": [
+      "data/sample_company_report.pdf"
+    ],
+    "dataset": "eval/sample_questions.json",
+    "cutoffs": [
+      1,
+      3
+    ],
+    "chunk_size": 700,
+    "overlap": 100,
+    "chunk_count": 2,
+    "embedding_model": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+    "fastembed_version": "0.8.0"
+  },
+  "metrics": {
+    "keyword": {
+      "recall_at_1": 0.6666666666666666,
+      "recall_at_3": 0.8333333333333334,
+      "mrr": 0.75
+    },
+    "vector": {
+      "recall_at_1": 0.8333333333333334,
+      "recall_at_3": 1.0,
+      "mrr": 0.9166666666666666
+    }
+  },
+  "cases": [
+    {
+      "id": "revenue",
+      "question": "How much money did the business make in 2025?",
+      "expected_source": "sample_company_report.pdf",
+      "expected_page": 1,
+      "keyword": {
+        "rank": 1,
+        "retrieved": [
+          {
+            "rank": 1,
+            "citation": "sample_company_report.pdf · 第 1 页 · sample_company_report-p1-c1",
+            "source": "sample_company_report.pdf",
+            "page": 1,
+            "chunk_id": "sample_company_report-p1-c1",
+            "score": 7.6791
+          },
+          {
+            "rank": 2,
+            "citation": "sample_company_report.pdf · 第 2 页 · sample_company_report-p2-c1",
+            "source": "sample_company_report.pdf",
+            "page": 2,
+            "chunk_id": "sample_company_report-p2-c1",
+            "score": 1.1111
+          }
+        ]
+      },
+      "vector": {
+        "rank": 1,
+        "retrieved": [
+          {
+            "rank": 1,
+            "citation": "sample_company_report.pdf · 第 1 页 · sample_company_report-p1-c1",
+            "source": "sample_company_report.pdf",
+            "page": 1,
+            "chunk_id": "sample_company_report-p1-c1",
+            "score": 0.4224
+          },
+          {
+            "rank": 2,
+            "citation": "sample_company_report.pdf · 第 2 页 · sample_company_report-p2-c1",
+            "source": "sample_company_report.pdf",
+            "page": 2,
+            "chunk_id": "sample_company_report-p2-c1",
+            "score": 0.356
+          }
+        ]
+      },
+      "comparison": "same",
+      "diagnosis": {
+        "category": "无差异",
+        "analysis": "两种方法都把包含 2025 与经营收入事实的第 1 页排在首位。"
+      }
+    },
+    {
+      "id": "premium_mix",
+      "question": "Which product tier made up most of sales?",
+      "expected_source": "sample_company_report.pdf",
+      "expected_page": 1,
+      "keyword": {
+        "rank": 1,
+        "retrieved": [
+          {
+            "rank": 1,
+            "citation": "sample_company_report.pdf · 第 1 页 · sample_company_report-p1-c1",
+            "source": "sample_company_report.pdf",
+            "page": 1,
+            "chunk_id": "sample_company_report-p1-c1",
+            "score": 3.5137
+          }
+        ]
+      },
+      "vector": {
+        "rank": 2,
+        "retrieved": [
+          {
+            "rank": 1,
+            "citation": "sample_company_report.pdf · 第 2 页 · sample_company_report-p2-c1",
+            "source": "sample_company_report.pdf",
+            "page": 2,
+            "chunk_id": "sample_company_report-p2-c1",
+            "score": 0.4058
+          },
+          {
+            "rank": 2,
+            "citation": "sample_company_report.pdf · 第 1 页 · sample_company_report-p1-c1",
+            "source": "sample_company_report.pdf",
+            "page": 1,
+            "chunk_id": "sample_company_report-p1-c1",
+            "score": 0.3363
+          }
+        ]
+      },
+      "comparison": "vector_degraded",
+      "diagnosis": {
+        "category": "Embedding + Chunking",
+        "analysis": "Vector 将正确页从第 1 名降到第 2 名。问题中的 product tier / sales 与原文 premium products / revenue 存在语义关系，但每个页面被合并为一个宽泛 Chunk，模型把第 2 页的经营管理语境判得更相似。主因是当前 Embedding 在该改写上的区分不足，粗粒度 Chunking 放大了偏差。"
+      }
+    },
+    {
+      "id": "sales_route",
+      "question": "Which sales route was expanded in eastern China?",
+      "expected_source": "sample_company_report.pdf",
+      "expected_page": 1,
+      "keyword": {
+        "rank": 1,
+        "retrieved": [
+          {
+            "rank": 1,
+            "citation": "sample_company_report.pdf · 第 1 页 · sample_company_report-p1-c1",
+            "source": "sample_company_report.pdf",
+            "page": 1,
+            "chunk_id": "sample_company_report-p1-c1",
+            "score": 7.1371
+          }
+        ]
+      },
+      "vector": {
+        "rank": 1,
+        "retrieved": [
+          {
+            "rank": 1,
+            "citation": "sample_company_report.pdf · 第 1 页 · sample_company_report-p1-c1",
+            "source": "sample_company_report.pdf",
+            "page": 1,
+            "chunk_id": "sample_company_report-p1-c1",
+            "score": 0.4261
+          },
+          {
+            "rank": 2,
+            "citation": "sample_company_report.pdf · 第 2 页 · sample_company_report-p2-c1",
+            "source": "sample_company_report.pdf",
+            "page": 2,
+            "chunk_id": "sample_company_report-p2-c1",
+            "score": 0.2932
+          }
+        ]
+      },
+      "comparison": "same",
+      "diagnosis": {
+        "category": "无差异",
+        "analysis": "expanded、China 等词面信号已经足够，Embedding 没有带来额外排名收益。"
+      }
+    },
+    {
+      "id": "inventory_efficiency",
+      "question": "Did stock management become slower?",
+      "expected_source": "sample_company_report.pdf",
+      "expected_page": 2,
+      "keyword": {
+        "rank": 1,
+        "retrieved": [
+          {
+            "rank": 1,
+            "citation": "sample_company_report.pdf · 第 2 页 · sample_company_report-p2-c1",
+            "source": "sample_company_report.pdf",
+            "page": 2,
+            "chunk_id": "sample_company_report-p2-c1",
+            "score": 1.6866
+          }
+        ]
+      },
+      "vector": {
+        "rank": 1,
+        "retrieved": [
+          {
+            "rank": 1,
+            "citation": "sample_company_report.pdf · 第 2 页 · sample_company_report-p2-c1",
+            "source": "sample_company_report.pdf",
+            "page": 2,
+            "chunk_id": "sample_company_report-p2-c1",
+            "score": 0.3832
+          },
+          {
+            "rank": 2,
+            "citation": "sample_company_report.pdf · 第 1 页 · sample_company_report-p1-c1",
+            "source": "sample_company_report.pdf",
+            "page": 1,
+            "chunk_id": "sample_company_report-p1-c1",
+            "score": 0.2093
+          }
+        ]
+      },
+      "comparison": "same",
+      "diagnosis": {
+        "category": "无差异",
+        "analysis": "management 与库存周转语境使两种方法都能命中第 2 页；当前样本无法证明语义检索更优。"
+      }
+    },
+    {
+      "id": "management_concerns",
+      "question": "What concerns did executives highlight?",
+      "expected_source": "sample_company_report.pdf",
+      "expected_page": 2,
+      "keyword": {
+        "rank": null,
+        "retrieved": []
+      },
+      "vector": {
+        "rank": 1,
+        "retrieved": [
+          {
+            "rank": 1,
+            "citation": "sample_company_report.pdf · 第 2 页 · sample_company_report-p2-c1",
+            "source": "sample_company_report.pdf",
+            "page": 2,
+            "chunk_id": "sample_company_report-p2-c1",
+            "score": 0.3434
+          },
+          {
+            "rank": 2,
+            "citation": "sample_company_report.pdf · 第 1 页 · sample_company_report-p1-c1",
+            "source": "sample_company_report.pdf",
+            "page": 1,
+            "chunk_id": "sample_company_report-p1-c1",
+            "score": 0.0932
+          }
+        ]
+      },
+      "comparison": "vector_improved",
+      "diagnosis": {
+        "category": "Embedding",
+        "analysis": "Keyword 因 concerns / executives 与 risks / management 没有直接重合而完全漏检；Vector 捕捉到管理层与风险的语义对应关系，从 MISS 提升到第 1 名。"
+      }
+    },
+    {
+      "id": "next_priority",
+      "question": "What will the firm focus on next year?",
+      "expected_source": "sample_company_report.pdf",
+      "expected_page": 2,
+      "keyword": {
+        "rank": 2,
+        "retrieved": [
+          {
+            "rank": 1,
+            "citation": "sample_company_report.pdf · 第 1 页 · sample_company_report-p1-c1",
+            "source": "sample_company_report.pdf",
+            "page": 1,
+            "chunk_id": "sample_company_report-p1-c1",
+            "score": 6.5795
+          },
+          {
+            "rank": 2,
+            "citation": "sample_company_report.pdf · 第 2 页 · sample_company_report-p2-c1",
+            "source": "sample_company_report.pdf",
+            "page": 2,
+            "chunk_id": "sample_company_report-p2-c1",
+            "score": 1.125
+          }
+        ]
+      },
+      "vector": {
+        "rank": 1,
+        "retrieved": [
+          {
+            "rank": 1,
+            "citation": "sample_company_report.pdf · 第 2 页 · sample_company_report-p2-c1",
+            "source": "sample_company_report.pdf",
+            "page": 2,
+            "chunk_id": "sample_company_report-p2-c1",
+            "score": 0.3252
+          },
+          {
+            "rank": 2,
+            "citation": "sample_company_report.pdf · 第 1 页 · sample_company_report-p1-c1",
+            "source": "sample_company_report.pdf",
+            "page": 1,
+            "chunk_id": "sample_company_report-p1-c1",
+            "score": 0.2884
+          }
+        ]
+      },
+      "comparison": "vector_improved",
+      "diagnosis": {
+        "category": "Keyword 检索逻辑",
+        "analysis": "Keyword 被 what、the、year 等通用词和第 1 页的 year 频次干扰，只把正确页排在第 2 名；Vector 捕捉 focus / next year 与 2026 priority 的语义关系，将正确页提升到第 1 名。"
+      }
+    }
+  ]
+}

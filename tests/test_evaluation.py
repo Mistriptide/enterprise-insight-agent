@@ -37,9 +37,11 @@ def test_evaluate_calculates_recall_and_mrr() -> None:
     report = evaluate(retriever, cases, retriever_name="fake", top_k=2)
 
     assert report.recall_at_k == 0.5
+    assert report.recall_at(1) == 0.5
     assert report.mean_reciprocal_rank == 0.5
     assert report.cases[0].rank == 1
     assert report.cases[1].rank is None
+    assert report.cases[0].retrieved[0].page == 1
 
 
 def test_load_cases_reads_json(tmp_path: Path) -> None:
