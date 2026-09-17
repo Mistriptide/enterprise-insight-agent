@@ -1,0 +1,38 @@
+[
+  {
+    "id": "revenue",
+    "question": "How much money did the business make in 2025?",
+    "expected_source": "sample_company_report.pdf",
+    "expected_page": 1
+  },
+  {
+    "id": "premium_mix",
+    "question": "Which product tier made up most of sales?",
+    "expected_source": "sample_company_report.pdf",
+    "expected_page": 1
+  },
+  {
+    "id": "sales_route",
+    "question": "Which sales route was expanded in eastern China?",
+    "expected_source": "sample_company_report.pdf",
+    "expected_page": 1
+  },
+  {
+    "id": "inventory_efficiency",
+    "question": "Did stock management become slower?",
+    "expected_source": "sample_company_report.pdf",
+    "expected_page": 2
+  },
+  {
+    "id": "management_concerns",
+    "question": "What concerns did executives highlight?",
+    "expected_source": "sample_company_report.pdf",
+    "expected_page": 2
+  },
+  {
+    "id": "next_priority",
+    "question": "What will the firm focus on next year?",
+    "expected_source": "sample_company_report.pdf",
+    "expected_page": 2
+  }
+]

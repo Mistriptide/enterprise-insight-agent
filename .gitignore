@@ -19,3 +19,4 @@ Thumbs.db
 # Local documents (keep the generated demo PDF out of Git)
 data/*.pdf
 !data/.gitkeep
+data/model_cache/
